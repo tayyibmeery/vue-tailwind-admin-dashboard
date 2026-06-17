@@ -43,6 +43,7 @@
           width="32"
           height="32"
         />
+
       </router-link>
     </div>
     <div
@@ -242,21 +243,65 @@ const menuGroups = [
   {
     title: "Menu",
     items: [
-      {
-        icon: GridIcon,
-        name: "Dashboard",
-        subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-      },
-      {
-        icon: CalenderIcon,
-        name: "Calendar",
-        path: "/calendar",
-      },
+
       {
         icon: UserCircleIcon,
         name: "User Profile",
         path: "/profile",
       },
+      {
+        icon: BoxCubeIcon, // you can choose an icon
+        name: "Shipments",
+        path: "/admin/shipments",
+        // only visible to admin
+        adminOnly: true,
+      },
+      {
+        icon: BoxCubeIcon,
+        name: "My Shipments",
+        path: "/my-shipments",
+        // visible to all authenticated
+        userOnly: true,
+      },
+      {
+        icon: GridIcon,
+        name: "Dashboard",
+        subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+      },
+
+      // inside menuGroups array
+
+      {
+        icon: GridIcon,
+        name: "Cities",
+        path: "/admin/cities",
+        adminOnly: true,
+      },
+      {
+        icon: GridIcon,
+        name: "Categories",
+        path: "/admin/categories",
+        adminOnly: true,
+      },
+      {
+        icon: GridIcon,
+        name: "Sub Categories",
+        path: "/admin/sub-categories",
+        adminOnly: true,
+      },
+      {
+        icon: GridIcon,
+        name: "Sub Sub Categories",
+        path: "/admin/sub-sub-categories",
+        adminOnly: true,
+      },
+
+      {
+        icon: CalenderIcon,
+        name: "Calendar",
+        path: "/calendar",
+      },
+
 
       {
         name: "Forms",
