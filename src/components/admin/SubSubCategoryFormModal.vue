@@ -1,59 +1,82 @@
-<!-- src/components/admin/SubSubCategoryFormModal.vue -->
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
-    <!-- overlay & modal container same as above -->
-    <div class="...">
-      <div class="...">
-        <div class="...">
-          <h3>{{ formData.id ? 'Edit Sub Sub Category' : 'Add Sub Sub Category' }}</h3>
-          <div class="mt-4 space-y-4">
-            <!-- Category -->
-            <div>
-              <label>Category</label>
-              <select v-model="formData.category_id" @change="onCategoryChange">
-                <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-              </select>
-            </div>
-            <!-- Sub Category (filtered) -->
-            <div>
-              <label>Sub Category</label>
-              <select v-model="formData.sub_category_id">
-                <option v-for="sub in filteredSubCategories" :key="sub.id" :value="sub.id">{{ sub.name }}</option>
-              </select>
-            </div>
-            <!-- Name -->
-            <div>
-              <label>Sub Sub Category Name</label>
-              <input v-model="formData.name" type="text" />
-            </div>
-            <!-- Description -->
-            <div>
-              <label>Description</label>
-              <textarea v-model="formData.description" rows="2"></textarea>
-            </div>
-            <!-- Status -->
-            <div>
-              <label>Status</label>
-              <select v-model="formData.status">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
+  <FormModal :isOpen="isOpen" :title="formData.id ? 'Edit Sub Sub Category' : 'Add Sub Sub Category'"
+    :subtitle="formData.id ? 'Update the sub sub category details below.' : 'Fill in the details to add a new sub sub category.'"
+    :saveLabel="formData.id ? 'Update' : 'Create'" @close="close" @save="save">
+    <template #fields>
+      <div class="grid grid-cols-1 gap-5">
+        <!-- Category -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Category
+          </label>
+          <select v-model="formData.category_id" @change="onCategoryChange"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            :disabled="categoryStore.loading">
+            <option value="" disabled>Select a category</option>
+            <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+              {{ cat.name }}
+            </option>
+          </select>
+          <p v-if="categoryStore.loading" class="text-xs text-gray-400 mt-1">Loading categories...</p>
         </div>
-        <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
-          <button @click="save" class="...">Save</button>
-          <button @click="close" class="...">Cancel</button>
+
+        <!-- Sub Category (filtered) -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Sub Category
+          </label>
+          <select v-model="formData.sub_category_id"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            :disabled="subCategoryStore.loading || !formData.category_id">
+            <option value="" disabled>Select a sub category</option>
+            <option v-for="sub in filteredSubCategories" :key="sub.id" :value="sub.id">
+              {{ sub.name }}
+            </option>
+          </select>
+          <p v-if="subCategoryStore.loading" class="text-xs text-gray-400 mt-1">Loading sub categories...</p>
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Sub Sub Category Name
+          </label>
+          <input v-model="formData.name" type="text" placeholder="e.g. iPhone 15"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Description
+          </label>
+          <textarea v-model="formData.description" rows="3" placeholder="Brief description"
+            class="dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"></textarea>
+        </div>
+
+        <!-- Status -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Status
+          </label>
+          <select v-model="formData.status"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </FormModal>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import type { SubSubCategory, Category, SubCategory } from '@/types'
-import api from '@/services/api'
+import { storeToRefs } from 'pinia'
+import FormModal from '@/components/common/FormModal.vue'
+import { useCategoryStore } from '@/stores/categoryStore'
+import { useSubCategoryStore } from '@/stores/subCategoryStore'
+import type { SubSubCategory } from '@/types'
 
 const props = defineProps<{
   isOpen: boolean
@@ -65,14 +88,17 @@ const emit = defineEmits<{
   (e: 'save', data: Partial<SubSubCategory>): void
 }>()
 
-const categories = ref<Category[]>([])
-const subCategories = ref<SubCategory[]>([])
+const categoryStore = useCategoryStore()
+const subCategoryStore = useSubCategoryStore()
+const { items: categories } = storeToRefs(categoryStore)
+const { items: subCategories } = storeToRefs(subCategoryStore)
+
 const formData = ref<Partial<SubSubCategory>>({
   name: '',
   description: '',
   category_id: undefined,
   sub_category_id: undefined,
-  status: 'Active'
+  status: 'Active',
 })
 
 const filteredSubCategories = computed(() => {
@@ -80,35 +106,33 @@ const filteredSubCategories = computed(() => {
   return subCategories.value.filter(sub => sub.category_id === formData.value.category_id)
 })
 
-const fetchCategories = async () => {
-  const res = await api.get('/admin/categories?per_page=1000')
-  categories.value = res.data.data
-}
-const fetchSubCategories = async () => {
-  const res = await api.get('/admin/sub-categories?per_page=1000')
-  subCategories.value = res.data.data
-}
-
 const onCategoryChange = () => {
   formData.value.sub_category_id = undefined
 }
 
-watch(() => props.initialData, (newVal) => {
-  if (newVal) {
-    formData.value = { ...newVal }
-  } else {
-    formData.value = { name: '', description: '', category_id: undefined, sub_category_id: undefined, status: 'Active' }
-  }
-}, { immediate: true })
+watch(
+  () => props.initialData,
+  (newVal) => {
+    if (newVal) {
+      formData.value = { ...newVal }
+    } else {
+      formData.value = { name: '', description: '', category_id: undefined, sub_category_id: undefined, status: 'Active' }
+    }
+  },
+  { immediate: true }
+)
 
-watch(() => props.isOpen, (open) => {
-  if (open) {
-    fetchCategories()
-    fetchSubCategories()
-  } else {
-    formData.value = { name: '', description: '', category_id: undefined, sub_category_id: undefined, status: 'Active' }
+watch(
+  () => props.isOpen,
+  (open) => {
+    if (open) {
+      if (!categoryStore.items.length) categoryStore.fetchAll()
+      if (!subCategoryStore.items.length) subCategoryStore.fetchAll()
+    } else {
+      formData.value = { name: '', description: '', category_id: undefined, sub_category_id: undefined, status: 'Active' }
+    }
   }
-})
+)
 
 const close = () => emit('close')
 const save = () => emit('save', formData.value)

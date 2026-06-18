@@ -1,61 +1,65 @@
-<!-- src/components/admin/SubCategoryFormModal.vue -->
 <template>
-  <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-      <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-        <div class="absolute inset-0 bg-gray-500 opacity-75" @click="close"></div>
-      </div>
-      <div
-        class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-        <div class="px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4">
-          <div class="sm:flex sm:items-start">
-            <div class="w-full mt-3 text-center sm:mt-0 sm:text-left">
-              <h3 class="text-lg font-medium leading-6 text-gray-900">
-                {{ formData.id ? 'Edit Sub Category' : 'Add Sub Category' }}
-              </h3>
-              <div class="mt-4 space-y-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Category</label>
-                  <select v-model="formData.category_id"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm">
-                    <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Sub Category Name</label>
-                  <input v-model="formData.name" type="text"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm" />
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Description</label>
-                  <textarea v-model="formData.description" rows="2"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm"></textarea>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700">Status</label>
-                  <select v-model="formData.status"
-                    class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:ring-brand-500 focus:border-brand-500 sm:text-sm">
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
+  <FormModal :isOpen="isOpen" :title="formData.id ? 'Edit Sub Category' : 'Add Sub Category'"
+    :subtitle="formData.id ? 'Update the sub category details below.' : 'Fill in the details to add a new sub category.'"
+    :saveLabel="formData.id ? 'Update' : 'Create'" @close="close" @save="save">
+    <template #fields>
+      <div class="grid grid-cols-1 gap-5">
+        <!-- Category dropdown -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Category
+          </label>
+          <select v-model="formData.category_id"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            :disabled="categoryStore.loading">
+            <option value="" disabled>Select a category</option>
+            <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+              {{ cat.name }}
+            </option>
+          </select>
+          <p v-if="categoryStore.loading" class="text-xs text-gray-400 mt-1">Loading categories...</p>
         </div>
-        <div class="px-4 py-3 bg-gray-50 sm:px-6 sm:flex sm:flex-row-reverse">
-          <button @click="save" class="...">Save</button>
-          <button @click="close" class="...">Cancel</button>
+
+        <!-- Name -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Sub Category Name
+          </label>
+          <input v-model="formData.name" type="text" placeholder="e.g. Smartphones"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30" />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Description
+          </label>
+          <textarea v-model="formData.description" rows="3" placeholder="Brief description"
+            class="dark:bg-dark-900 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30"></textarea>
+        </div>
+
+        <!-- Status -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            Status
+          </label>
+          <select v-model="formData.status"
+            class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </FormModal>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import type { SubCategory, Category } from '@/types'
-import api from '@/services/api'
+import { storeToRefs } from 'pinia'
+import FormModal from '@/components/common/FormModal.vue'
+import { useCategoryStore } from '@/stores/categoryStore'
+import type { SubCategory } from '@/types'
 
 const props = defineProps<{
   isOpen: boolean
@@ -67,35 +71,38 @@ const emit = defineEmits<{
   (e: 'save', data: Partial<SubCategory>): void
 }>()
 
-const categories = ref<Category[]>([])
+const categoryStore = useCategoryStore()
+const { items: categories } = storeToRefs(categoryStore)
+
 const formData = ref<Partial<SubCategory>>({
   name: '',
   description: '',
   category_id: undefined,
-  status: 'Active'
+  status: 'Active',
 })
 
-const fetchCategories = async () => {
-  try {
-    const res = await api.get('/admin/categories?per_page=1000')
-    categories.value = res.data.data
-  } catch (e) { console.error(e) }
-}
+watch(
+  () => props.initialData,
+  (newVal) => {
+    if (newVal) {
+      formData.value = { ...newVal }
+    } else {
+      formData.value = { name: '', description: '', category_id: undefined, status: 'Active' }
+    }
+  },
+  { immediate: true }
+)
 
-watch(() => props.initialData, (newVal) => {
-  if (newVal) {
-    formData.value = { ...newVal }
-  } else {
-    formData.value = { name: '', description: '', category_id: undefined, status: 'Active' }
+watch(
+  () => props.isOpen,
+  (open) => {
+    if (open) {
+      if (!categoryStore.items.length) categoryStore.fetchAll()
+    } else {
+      formData.value = { name: '', description: '', category_id: undefined, status: 'Active' }
+    }
   }
-}, { immediate: true })
-
-watch(() => props.isOpen, (open) => {
-  if (open) fetchCategories()
-  else {
-    formData.value = { name: '', description: '', category_id: undefined, status: 'Active' }
-  }
-})
+)
 
 const close = () => emit('close')
 const save = () => emit('save', formData.value)
